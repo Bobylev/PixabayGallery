@@ -14,7 +14,7 @@ class GalleryViewModel(private val repository: GalleryRepository) : ViewModel() 
 
     val imageListObservable = _currentKeyword.switchMap { keyword ->
         repository.searchImages(keyword)
-    }.cachedIn(viewModelScope)
+    }.cachedIn(viewModelScope).asFlow()
 
     fun onSearchButtonClicked(keyword: String) {
         if (keyword.isNotBlank()) {
