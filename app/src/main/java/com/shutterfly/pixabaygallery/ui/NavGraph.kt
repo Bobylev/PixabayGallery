@@ -24,7 +24,10 @@ fun SetupNavGraph(
     )
     {
         composable(route = Screen.Gallery.route) {
-            GalleryScreen(navController = navController, viewModel = viewModel)
+            GalleryScreen(
+                navController = navController,
+                viewModel = viewModel
+            )
         }
         composable(
             route = Screen.GalleryItem.route,
@@ -39,6 +42,7 @@ fun SetupNavGraph(
         ) {
             GalleryItemScreen(
                 navController = navController,
+                viewModel = viewModel,
                 id = it.arguments?.getInt(PARAMETER_ID_NAME) ?: 0,
                 url = it.arguments?.getString(PARAMETER_IMAGE_URL) ?: ""
             )

@@ -1,5 +1,6 @@
 package com.shutterfly.pixabaygallery.ui
 
+import android.content.Context
 import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.compose.setContent
@@ -51,6 +52,7 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.shutterfly.pixabaygallery.R
 import com.shutterfly.pixabaygallery.models.GalleryItem
+import com.shutterfly.pixabaygallery.repositories.FavoritesRepository
 import com.shutterfly.pixabaygallery.repositories.GalleryRepository
 import com.shutterfly.pixabaygallery.viewmodels.GalleryViewModel
 import com.shutterfly.pixabaygallery.viewmodels.GalleryViewModelFactory
@@ -58,7 +60,7 @@ import com.shutterfly.pixabaygallery.viewmodels.GalleryViewModelFactory
 class GalleryActivity : AppCompatActivity() {
 
     private val viewModel by viewModels<GalleryViewModel> {
-        GalleryViewModelFactory(GalleryRepository())
+        GalleryViewModelFactory(GalleryRepository(), FavoritesRepository(context = applicationContext))
     }
 
     lateinit var navController: NavHostController

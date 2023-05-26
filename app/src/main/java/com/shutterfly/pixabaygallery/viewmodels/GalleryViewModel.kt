@@ -2,15 +2,28 @@ package com.shutterfly.pixabaygallery.viewmodels
 
 import androidx.lifecycle.*
 import androidx.paging.cachedIn
+import com.shutterfly.pixabaygallery.repositories.FavoritesRepository
 import com.shutterfly.pixabaygallery.repositories.GalleryRepository
+import kotlinx.coroutines.launch
+import kotlin.coroutines.coroutineContext
 
-class GalleryViewModel(private val repository: GalleryRepository) : ViewModel() {
+class GalleryViewModel(
+    private val repository: GalleryRepository,
+    private val favoritesRepository: FavoritesRepository
+    ) : ViewModel() {
 
     private companion object {
         private const val DEFAULT_SEARCH_KEYWORD = "android"
     }
 
     private val _currentKeyword = MutableLiveData(DEFAULT_SEARCH_KEYWORD)
+    private val _favorites = HashSet<Int>()
+
+    init {
+        viewModelScope.launch {
+            _favorites.addAll(favoritesRepository.getFavorites())
+        }
+    }
 
     val imageListObservable = _currentKeyword.switchMap { keyword ->
         repository.searchImages(keyword)
@@ -21,13 +34,25 @@ class GalleryViewModel(private val repository: GalleryRepository) : ViewModel() 
             _currentKeyword.value = keyword
         }
     }
+
+    fun addRemoveFavorite(id: Int) {
+        if (isLiked(id)) _favorites.remove(id) else _favorites.add(id)
+        viewModelScope.launch {
+            favoritesRepository.saveFavorites(_favorites.toList())
+        }
+    }
+    fun isLiked(id: Int) = _favorites.contains(id)
+
 }
 
-class GalleryViewModelFactory(private val repository: GalleryRepository) : ViewModelProvider.Factory {
+class GalleryViewModelFactory(
+    private val repository: GalleryRepository,
+    private val favoritesRepository: FavoritesRepository
+) : ViewModelProvider.Factory {
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return if (modelClass.isAssignableFrom(GalleryViewModel::class.java)) {
-            GalleryViewModel(repository) as T
+            GalleryViewModel(repository, favoritesRepository) as T
         } else {
             throw IllegalArgumentException("ViewModel not found")
         }

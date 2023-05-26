@@ -3,17 +3,21 @@ package com.shutterfly.pixabaygallery.ui
 import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -29,6 +33,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
@@ -86,8 +91,9 @@ fun GalleryScreen(navController: NavController, viewModel: GalleryViewModel) {
             GalleryView(
                 items = items,
                 onItemClick = { id, url ->
-                    navController.navigate(route = Screen.GalleryItem.addParams(id, url), )
-                }
+                    navController.navigate(route = Screen.GalleryItem.addParams(id, url))
+                },
+                viewModel = viewModel
             )
         }
     }
@@ -137,7 +143,8 @@ fun SearchView(
 fun GalleryView(
     items: LazyPagingItems<GalleryItem>,
     onItemClick: (Int, String) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: GalleryViewModel
 ) {
     var columnCount = GRID_PORTRAIT_COLUMNS_COUNT
     if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE) columnCount =
@@ -160,12 +167,25 @@ fun GalleryView(
                     },
                 shape = RectangleShape
             ) {
-                GlideImage(
-                    modifier = modifier.fillMaxSize(),
-                    model = items[id]?.previewUrl,
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop
-                )
+                Box(modifier = modifier.fillMaxSize()) {
+                    GlideImage(
+                        modifier = modifier.fillMaxSize(),
+                        model = items[id]?.previewUrl,
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop
+                    )
+                    if (viewModel.isLiked(items[id]?.id ?: 0)) {
+                        Icon(
+                            modifier = modifier
+                                .size(28.dp, 28.dp)
+                                .align(Alignment.TopEnd)
+                                .padding(PaddingValues(0.dp, 4.dp, 4.dp)),
+                            imageVector = Icons.Default.Favorite,
+                            contentDescription = null,
+                            tint = Color.Red
+                        )
+                    }
+                }
             }
         }
     }
