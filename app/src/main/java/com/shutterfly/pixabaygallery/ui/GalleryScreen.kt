@@ -1,11 +1,15 @@
 package com.shutterfly.pixabaygallery.ui
 
 import android.content.res.Configuration
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,8 +21,8 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -35,13 +39,18 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -108,37 +117,46 @@ fun SearchView(
     onValueChange: (String) -> Unit
 ) {
     TextField(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth()
+            .border(BorderStroke(0.dp, Color.Black)),
         value = search,
         onValueChange = onValueChange,
         maxLines = 1,
+        shape = RectangleShape,
+        textStyle = TextStyle.Default.copy(fontSize = 18.sp),
         colors = TextFieldDefaults.textFieldColors(
             containerColor = colorResource(R.color.teal_200),
             placeholderColor = Color.Black,
             textColor = Color.Black,
             focusedIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent,
+            disabledIndicatorColor = Color.Transparent,
             cursorColor = Color.Black,
         ),
         trailingIcon = {
             IconButton(
                 modifier = modifier
-                    .background(color = colorResource(R.color.teal_700)),
+                    .background(color = colorResource(R.color.teal_700))
+                    .padding(0.dp, 3.dp, 0.dp, 4.dp),
                 onClick = {
                     onSearchClick(search)
                 },
                 enabled = search.isNotEmpty()
             ) {
                 Icon(
-                    imageVector = Icons.Default.Search,
+                    painter = painterResource(R.drawable.ic_search),
                     contentDescription = ""
                 )
             }
         },
-        placeholder = { Text(text = stringResource(R.string.search_hint)) }
+        placeholder = {
+            Text(text = stringResource(R.string.search_hint))
+        }
     )
 }
 
-@OptIn(ExperimentalGlideComposeApi::class)
+@OptIn(ExperimentalGlideComposeApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun GalleryView(
     items: LazyPagingItems<GalleryItem>,
@@ -185,6 +203,37 @@ fun GalleryView(
                             tint = Color.Red
                         )
                     }
+
+                    Row(
+                        modifier = modifier
+                            .align(Alignment.BottomEnd)
+                            .padding(4.dp),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = items[id]?.likes ?: "0",
+                            modifier = modifier.padding(4.dp),
+                            fontSize = 14.sp,
+                            style = TextStyle(
+                                background = Color.Gray.copy(alpha = 0.2f),
+                                color = Color.White,
+                                shadow = Shadow(
+                                    color = Color.Black,
+                                    offset = Offset(2f, 1f),
+                                    blurRadius = 4f
+                                )
+                            )
+                        )
+                        Icon(
+                            modifier = modifier
+                                .size(24.dp, 24.dp),
+                            imageVector = Icons.Default.Face,
+                            contentDescription = null,
+                            tint = Color.White
+                        )
+                    }
+
                 }
             }
         }

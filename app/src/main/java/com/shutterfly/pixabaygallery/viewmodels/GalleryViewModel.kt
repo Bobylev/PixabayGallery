@@ -1,11 +1,15 @@
 package com.shutterfly.pixabaygallery.viewmodels
 
-import androidx.lifecycle.*
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.asFlow
+import androidx.lifecycle.switchMap
+import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
 import com.shutterfly.pixabaygallery.repositories.FavoritesRepository
 import com.shutterfly.pixabaygallery.repositories.GalleryRepository
 import kotlinx.coroutines.launch
-import kotlin.coroutines.coroutineContext
 
 class GalleryViewModel(
     private val repository: GalleryRepository,
@@ -45,6 +49,7 @@ class GalleryViewModel(
 
 }
 
+@Suppress("UNCHECKED_CAST")
 class GalleryViewModelFactory(
     private val repository: GalleryRepository,
     private val favoritesRepository: FavoritesRepository
