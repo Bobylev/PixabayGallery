@@ -37,7 +37,7 @@ class GalleryPagingSource(private val keyword: String) : PagingSource<Int, Galle
                 // If we are on the first page, the previous key should be null
                 prevKey = if (currentPage > 1) currentPage - 1 else null,
                 // Null if we reach the end and we are not getting data anymore
-                nextKey = if (images.galleryItems.isNullOrEmpty()) null else currentPage + 1
+                nextKey = if (images.galleryItems.isEmpty()) null else currentPage + 1
             )
         } catch (e: Exception) {
             LoadResult.Error(e)

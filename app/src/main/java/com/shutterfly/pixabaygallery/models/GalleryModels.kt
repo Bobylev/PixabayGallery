@@ -10,5 +10,9 @@ data class GalleryData(
 data class GalleryItem(
     val id: Int,
     @SerializedName("previewURL")
-    val previewUrl: String
+    val previewUrl: String,
+    @SerializedName("largeImageURL")
+    val imageURL: String,
+    @SerializedName("likes")
+    val likes: String
 )
